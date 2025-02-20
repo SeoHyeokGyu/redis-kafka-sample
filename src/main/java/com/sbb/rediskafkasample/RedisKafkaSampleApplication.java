@@ -13,6 +13,7 @@ public class RedisKafkaSampleApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RedisKafkaSampleApplication.class, args);
 		log.debug("test");
+		log.debug("test2");
 	}
 
 }
