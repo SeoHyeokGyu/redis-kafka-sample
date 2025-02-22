@@ -1,0 +1,44 @@
+version: '3'
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"  # Redis 기본 포트
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  zookeeper:
+    image: zookeeper:3.7
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    environment:
+      KAFKA_ADVERTISED_LISTENER: INSIDE://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
+      KAFKA_LISTENER_NAME_INTERNAL: INTERNAL
+      KAFKA_LISTENER_INTERNAL_PORT: 9093
+      KAFKA_LISTENER_PORT: 9092
+      KAFKA_LISTENER_NAME_EXTERNAL: EXTERNAL
+      KAFKA_LISTENER_EXTERNAL_PORT: 9094
+      KAFKA_LISTENER_INTERNAL: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    ports:
+      - "9092:9092"  # Kafka 기본 포트
+    depends_on:
+      - zookeeper
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+networks:
+  mynetwork:
+    driver: bridge
