@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: redis-kafka-sample
+
+  profiles:
+    active: local
+
+---
+logging:
+  level:
+#    root: debug
+    web: debug
+    com.sbb.rediskafkasample: debug
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  output:
+    ansi:
+      enabled: always
+
+  kafka:
+    bootstrap-servers: localhost:10000,localhost:10001,localhost:10002
+    producer:
+      # 필수 설정
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+      # 추가 설정
+    #      acks: all                    # 메시지 수신 확인 레벨
+    #      retries: 3                   # 재시도 횟수
+    #      batch-size: 16384           # 배치 크기
+    #      buffer-memory: 33554432     # 버퍼 메모리
+    #      properties:
+    #        linger.ms: 1              # 배치 전송 대기 시간
+    #        request.timeout.ms: 30000 # 요청 타임아웃
+    #        max.block.ms: 60000       # 블록 최대 시간
+
+    consumer:
+      group-id: test-consumer-group
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+
+    listener:
+      type: batch
+
+
+  data:
+    redis:
+      port: 6379
+
+
+kafka:
+  topic:
+    name: test-topic
+
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
